@@ -1,6 +1,6 @@
 
 /*
-<https://github.com/rafagafe/base85>
+<https://github.com/particle-iot/base85>
      
   Licensed under the MIT License <http://opensource.org/licenses/MIT>.
   SPDX-License-Identifier: MIT
@@ -23,9 +23,11 @@
     
 */
 
-#include <stdio.h>
-#include <string.h>
-#include "../base85.h"
+#include "Particle.h"
+#include "base85.h"
+
+SYSTEM_THREAD(ENABLED);
+SYSTEM_MODE(AUTOMATIC);
 
 /* 1) A null-terminated string is stored in an array named 'plain'.
  * 2) The text in 'plain' is printed.
@@ -36,29 +38,31 @@
  * 7) Check the length of 'buffer'.
  * 8) Compare 'plain' with 'buffer'.
  * 9) Print the plain text stored in 'buffer'. */
-int main( void ) {
+void setup() {
+    Serial.begin(115200);
+    waitFor(Serial.isConnected, 10000);
 
     static char const plain[] = "This is a plain text.";
-    puts( plain );
+    Serial.println( plain );
 
-    char buffer[128];
-    bintob85( buffer, plain, sizeof plain );
+    char buffer[128] = {};
+    bintob85( buffer, plain, sizeof(plain) );
 
-    printf( "%s%s%s", "The base85: '", buffer, "'.\n" );
+    Serial.printlnf( "The base85: '%s'.", buffer );
 
     char* const end = b85decode( buffer );
     if ( !end ) {
-        fputs( "Bad base85 format.", stderr );
-        return -1;
+        Serial.println( "Bad base85 format." );
     }
 
     int const equal = !strcmp( plain, buffer );
     if( !equal ) {
-        fputs( "The output is different from the input.\n", stderr );
-        return -1;
+        Serial.println( "The output is different from the input." );
     }
 
     puts( buffer );
+}
 
-    return 0;
+void loop() {
+
 }

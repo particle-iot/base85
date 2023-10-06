@@ -115,7 +115,7 @@ static unsigned long betoul( void const* src, int sz ) {
     return value;
 }
 
-char* bintob85( char* restrict dest, void const* restrict src, size_t size ) {
+char* bintob85( char* dest, void const* src, size_t size ) {
 
     size_t const quartets = size / 4;
     char const* s = (char*)src + 4 * quartets;
@@ -150,7 +150,7 @@ static void* ultobe( void* dest, unsigned long value ) {
 }
 
 /* Convert a base85 string to binary format. */
-void* b85tobin( void* restrict dest, char const* restrict src ) {
+void* b85tobin( void* dest, char const* src ) {
 
     for( unsigned char const* s = (unsigned char const*)src;; ) {
 

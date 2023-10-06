@@ -1,6 +1,6 @@
 
 /*
-<https://github.com/rafagafe/base85>
+<https://github.com/particle-iot/base85>
      
   Licensed under the MIT License <http://opensource.org/licenses/MIT>.
   SPDX-License-Identifier: MIT
@@ -23,9 +23,11 @@
     
 */
 
-#include <stdio.h>
-#include <string.h>
-#include "../base85.h"
+#include "Particle.h"
+#include "base85.h"
+
+SYSTEM_THREAD(ENABLED);
+SYSTEM_MODE(AUTOMATIC);
 
 /* 1) Fill an array named 'binary'.
  * 2) Convert 'binary' in base85 format in an array named 'base85'.
@@ -34,35 +36,36 @@
  * 5) Check if the conversion was successful.
  * 6) Check the length of 'output'.
  * 7) Compare 'binary' with 'output'. */
-int main( void ) {
+void setup() {
+    Serial.begin(115200);
+    waitFor(Serial.isConnected, 10000);
 
     char binary[64];
     for( int i = 0; i < 64; ++i )
         binary[i] = i;
 
-    char base85[128];
-    bintob85( base85, binary, sizeof binary );
+    char base85[128] = {};
+    bintob85( base85, binary, sizeof(binary) );
 
-    printf( "%s%s%s", "The base85: '", base85, "'.\n" );
+    Serial.printlnf( "The base85: '%s'.", base85);
 
-    char output[64];
-    char* const end = b85tobin( output, base85 );
+    char output[64] = {};
+    auto end = (char*)b85tobin( output, base85 );
     if ( !end ) {
-        fputs( "Bad base85 format.", stderr );
-        return -1;
+        Serial.println( "Bad base85 format." );
     }
 
-    int const outputlen = end - output;
-    if ( outputlen != sizeof binary ) {
-        fputs( "The length of the output is not as expected.\n", stderr );
-        return -1;
+    auto outputlen = (size_t)(end - output);
+    if ( outputlen != sizeof(binary) ) {
+        Serial.println( "The length of the output is not as expected." );
     }
 
-    int const equal = !memcmp( binary, output, sizeof binary );
+    auto equal = !memcmp( binary, output, sizeof(binary) );
     if( !equal ) {
-        fputs( "The output is different from the input.\n", stderr );
-        return -1;
+        Serial.println( "The output is different from the input." );
     }
+}
 
-    return 0;
+void loop() {
+
 }
