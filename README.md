@@ -1,7 +1,7 @@
 # Base85
 This library has been ported from Rafa García's base85 library found [here](https://github.com/rafagafe/base85).
 
-Base85 is a C library to convert from plain to base 85 and vice versa suitable for embedded systems. It uses the character set of the Base85 RFC 1924.
+Base85 is a C library to convert from plain to base 85 and vice versa suitable for embedded systems. It uses the character set of the Base85 [RFC 1924](https://datatracker.ietf.org/doc/html/rfc1924#section-4.2).
 
 
 # API
