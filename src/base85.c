@@ -23,6 +23,7 @@
 
 */
 
+#include <string.h>
 #include "base85.h"
 
 /** Lookup table to convert a binary number in a base 85 digit. */
@@ -74,14 +75,14 @@ static unsigned char const digittobin[] = {
 
 
 /** Powers of 85 list. */
-static unsigned long const pow85[] = { p854, p853, p852, p851, p850 };
+static uint32_t const pow85[] = { p854, p853, p852, p851, p850 };
 
 /** Converts a integer of 4 bytes in 5 digits of base 85.
   * @param dest Memory block where to put the 5 digits of base 85.
   * @param value Value of the integer of 4 bytes. */
-static void ultob85( char* dest, unsigned int long value ) {
+static void ultob85( char* dest, uint32_t value ) {
 
-    unsigned int const digitsQty = sizeof pow85 / sizeof *pow85;
+    unsigned int const digitsQty = sizeof(pow85) / sizeof(*pow85);
 
     for( unsigned int i = 0; i < digitsQty; ++i ) {
         unsigned int const bin = value / pow85[ i ];
@@ -100,7 +101,7 @@ static char const* const littleEndian = (char const*)&endianness;
   * @param src Pointer to array of bytes.
   * @param sz Size in bytes of array from 0 until 4.
   * @return  The unsigned long value. */
-static unsigned long betoul( void const* src, int sz ) {
+static uint32_t betoul( void const* src, int sz ) {
 
     unsigned long value = 0;
     char* const d = (char*)&value;
@@ -138,7 +139,7 @@ char* bintob85( char* dest, void const* src, size_t size ) {
   * @param dest Destination memory block.
   * @param value Value to copy.
   * @return  dest + 4 */
-static void* ultobe( void* dest, unsigned long value ) {
+static void* ultobe( void* dest, uint32_t value ) {
 
     char* const d = (char*)dest;
     char const* const s = (char*)&value;
@@ -154,8 +155,8 @@ void* b85tobin( void* dest, char const* src ) {
 
     for( unsigned char const* s = (unsigned char const*)src;; ) {
 
-        unsigned long value = 0;
-        for( int i = 0; i < sizeof pow85 / sizeof *pow85; ++i, ++s ) {
+        uint32_t value = 0;
+        for( size_t i = 0; i < (sizeof(pow85) / sizeof(*pow85)); ++i, ++s ) {
             unsigned int const bin = digittobin[ *s ];
             if ( bin == notadigit )
                 return i == 0 ? dest : 0;

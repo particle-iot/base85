@@ -31,6 +31,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdint.h>
 
 /** @defgroup base85 Base85 Converter.
   * Base85 RFC 1924 version. The character set is, in order, 0–9, A–Z, a–z, and
@@ -64,6 +65,33 @@ static inline void* b85decode( void* p ) {
 static inline char* b85encode( void* p, size_t size ) {
     return bintob85( (char*)p, p, size );
 }
+
+/** Calculate the size of the resulting base85 encoding with padding alignment.
+  * @param binsz Size of binary input to encode to base85.
+  * @return The size of buffer that will encoded given the input size. */
+static inline size_t bintob85size( size_t binsz ) {
+  return (5 * ( binsz / 4 )) + (( binsz % 4 ) ? 5 : 0);
+}
+
+/**
+ * Calculate the size of the resulting base85 encoding without padding alignment.
+ * Input binary data still needs to by 4-byte aligned and padded with zeros.
+ * @param binsz Size of binary input to encode to base85.
+ * @return The size of output data that will encoded without extra padding. */
+static inline size_t unpaddedB85Size(size_t binsz) {
+    return ((binsz + 3) * 5 / 4) - 3;
+}
+
+/** Calculate the size of bytes written to a buffer.
+  * @param end The end pointer result of binary/base85 operations.
+  * @param start The beginning of the buffer from binary/base85 operations.
+  * @return The size, in bytes, of the given end pointer from the start of the buffer. */
+static inline size_t b85size( void* end, void* start ) {
+    uintptr_t pend = (uintptr_t)end;
+    uintptr_t pstart = (uintptr_t)start;
+    return (pend > pstart) ? (size_t)( pend - pstart ) : 0;
+}
+
 
 /** @ } */
 
